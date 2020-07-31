@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+  recommnedSongs-db:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: example
+    volumes:
+      - sqldata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+  recommnedSongs-backend:
+    image: recommendSongsService-backend
+    build: 
+      context: recommendSongsService.API
+    depends_on:
+      - recommnedSongs-db
+    restart: always
+    volumes:
+      - .:/app
+    ports:
+      - "51290:51290"
+
+volumes:
+  sqldata:
