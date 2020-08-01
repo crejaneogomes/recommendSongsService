@@ -1,4 +1,4 @@
-FROM microsoft/dotnet:3.1-sdk
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1
 
 RUN apt update && \
     apt install unzip && \
@@ -9,7 +9,8 @@ WORKDIR /app
 
 RUN ["dotnet", "restore"]
 RUN ["dotnet", "build"]
-EXPOSE 51290
 
-RUN chmod +x ./entrypoint.sh
+EXPOSE 5000
+EXPOSE 5001
+
 CMD ["dotnet", "run"]
