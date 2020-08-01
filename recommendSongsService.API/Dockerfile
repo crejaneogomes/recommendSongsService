@@ -7,6 +7,10 @@ RUN apt update && \
 COPY . /app
 WORKDIR /app
 
+RUN dotnet tool install --global dotnet-ef --version 3.1.6
+
+ENV PATH "$PATH:/root/.dotnet/tools"
+
 RUN ["dotnet", "restore"]
 RUN ["dotnet", "build"]
 

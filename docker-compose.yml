@@ -1,23 +1,26 @@
 version: '3'
 
 services:
-  recommnedsongs-db:
+  recommendsongs-db:
     image: postgres:latest
     restart: always
     environment:
+      POSTGRES_DB: RecommendSongsDB
       POSTGRES_PASSWORD: example
     volumes:
       - sqldata:/var/lib/postgresql/data
     ports:
       - "5432:5432"
-  recommnedsongs-backend:
-    command: dotnet watch run
-    image: recommnedsongs-backend
+  recommendsongs-backend:
+    command: bash -c "dotnet ef database update && dotnet watch run"
+    image: recommendsongs-backend
     build: 
       context: recommendSongsService.API
     depends_on:
-      - recommnedsongs-db
+      - recommendsongs-db
     restart: always
+    environment:
+      DOTNETCORE_ENVIRONMENT: Development
     volumes:
       - ./recommendSongsService.API:/app
     ports:

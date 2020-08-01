@@ -39,8 +39,10 @@ namespace recommendSongsService
                 c.SwaggerDoc(name:"v1", new OpenApiInfo {Title = "Recommend Songs Api", Version = "v1.0"});
             });
 
-            services.AddEntityFrameworkNpgsql()
-             .AddDbContext<RecommendSongsDbContext>(options => options.UseNpgsql(Configuration.GetConnectionString("RecommendSongsDB")));
+            services.AddDbContext<RecommendSongsDbContext>(options =>
+                options.UseNpgsql(Configuration.GetConnectionString("RecommendSongsDB")));
+            // services.AddEntityFrameworkNpgsql()
+            //  .AddDbContext<RecommendSongsDbContext>(options => options.UseNpgsql(Configuration.GetConnectionString("RecommendSongsDB")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

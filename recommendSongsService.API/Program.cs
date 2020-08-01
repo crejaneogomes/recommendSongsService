@@ -4,9 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
+using recommendSongsService.Model;
 
 namespace recommendSongsService
 {
@@ -17,7 +18,7 @@ namespace recommendSongsService
             var host = new WebHostBuilder()
             .UseKestrel()
             .UseContentRoot(Directory.GetCurrentDirectory())
-            .UseUrls("http://*:5000","https://*:5001")
+            .UseUrls("http://*:5000","http://*:5001")
             .UseIISIntegration()
             .UseStartup<Startup>()
             .Build();
