@@ -1,7 +1,7 @@
 version: '3'
 
 services:
-  recommnedSongs-db:
+  recommnedsongs-db:
     image: postgres:latest
     restart: always
     environment:
@@ -10,17 +10,18 @@ services:
       - sqldata:/var/lib/postgresql/data
     ports:
       - "5432:5432"
-  recommnedSongs-backend:
-    image: recommendSongsService-backend
+  recommnedsongs-backend:
+    command: dotnet watch run
+    image: recommnedsongs-backend
     build: 
       context: recommendSongsService.API
     depends_on:
-      - recommnedSongs-db
+      - recommnedsongs-db
     restart: always
     volumes:
-      - .:/app
+      - ./recommendSongsService.API:/app
     ports:
-      - "51290:51290"
-
+      - "5000:5000"
+      - "5001:5001"
 volumes:
   sqldata:
