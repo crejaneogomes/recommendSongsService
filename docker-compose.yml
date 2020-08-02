@@ -12,7 +12,8 @@ services:
     ports:
       - "5432:5432"
   recommendsongs-backend:
-    command: bash -c "dotnet ef database update && dotnet watch run"
+    container_name: recommendsongs-backend
+    command: bash -c "dotnet ef database update -v && dotnet watch run"
     image: recommendsongs-backend
     build: 
       context: recommendSongsService.API

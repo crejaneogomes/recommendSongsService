@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using recommendSongsService.Model;
+using Microsoft.Extensions.Configuration;
 
 namespace recommendSongsService
 {
@@ -15,23 +15,32 @@ namespace recommendSongsService
     {
         public static void Main(string[] args)
         {
-            var host = new WebHostBuilder()
-            .UseKestrel()
-            .UseContentRoot(Directory.GetCurrentDirectory())
-            .UseUrls("http://*:5000","http://*:5001")
-            .UseIISIntegration()
-            .UseStartup<Startup>()
-            .Build();
-
-            host.Run();
-            // CreateHostBuilder(args).Build().Run();
+            CreateHostBuilder(args).Build().Run();
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
+        public static IWebHostBuilder CreateHostBuilder(string[] args) =>
+            new WebHostBuilder()
+            .UseKestrel()
+            .UseContentRoot(Directory.GetCurrentDirectory())
+            .UseUrls("http://*:5000", "http://*:5001")
+            .UseIISIntegration()
+            .UseStartup<Startup>()
+            .ConfigureAppConfiguration((hostingContext, config) =>
+            {
+                config.Sources.Clear();
+
+                var env = hostingContext.HostingEnvironment;
+
+                config.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                      .AddJsonFile($"appsettings.{env.EnvironmentName}.json",
+                                     optional: true, reloadOnChange: true);
+
+                config.AddEnvironmentVariables();
+
+                if (args != null)
                 {
-                    webBuilder.UseStartup<Startup>();
-                });
+                    config.AddCommandLine(args);
+                }
+            });
     }
 }

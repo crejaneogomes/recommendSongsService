@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using recommendSongsService.API.Service;
 using recommendSongsService.Model;
 
 namespace recommendSongsService
@@ -40,9 +41,13 @@ namespace recommendSongsService
             });
 
             services.AddDbContext<RecommendSongsDbContext>(options =>
-                options.UseNpgsql(Configuration.GetConnectionString("RecommendSongsDB")));
-            // services.AddEntityFrameworkNpgsql()
-            //  .AddDbContext<RecommendSongsDbContext>(options => options.UseNpgsql(Configuration.GetConnectionString("RecommendSongsDB")));
+                 options.UseNpgsql(Configuration.GetConnectionString("RecommendSongsDB")));
+
+            services.AddControllersWithViews()
+                .AddNewtonsoftJson(options =>
+                    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+);
+            services.AddScoped<IUserService, UserService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
