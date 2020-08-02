@@ -11,12 +11,12 @@ namespace recommendSongsService.Model
         {
         }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-        modelBuilder.Entity<User>().HasData(
-                new User { Id=1, Name = "CROG" },
-                new User { Id=2, Name = "Docker Magazine" }
-            );
-        }
+        // protected override void OnModelCreating(ModelBuilder modelBuilder)
+        // {
+        // modelBuilder.Entity<User>().HasData(
+        //         new User { Id=-2, Name = "CROG" },
+        //         new User { Id=-1, Name = "Docker Magazine" }
+        //     );
+        // }
     }
 }
