@@ -45,8 +45,8 @@ namespace recommendSongsService.Migrations
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<int>("Email")
-                        .HasColumnType("integer");
+                    b.Property<string>("Email")
+                        .HasColumnType("text");
 
                     b.Property<string>("Hometown")
                         .HasColumnType("text");
@@ -60,20 +60,6 @@ namespace recommendSongsService.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Email = 0,
-                            Name = "CROG"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Email = 0,
-                            Name = "Docker Magazine"
-                        });
                 });
 
             modelBuilder.Entity("recommendSongsService.Model.Note", b =>
