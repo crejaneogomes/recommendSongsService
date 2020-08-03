@@ -15,6 +15,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using recommendSongsService.API;
 using recommendSongsService.API.models;
 using recommendSongsService.API.Service;
 using recommendSongsService.Model;
@@ -44,6 +45,8 @@ namespace recommendSongsService
             {
                 c.SwaggerDoc(name:"v1", new OpenApiInfo {Title = "Recommend Songs Api", Version = "v1.0"});
             });
+            
+            services.AddSingleton(new AppSettings(Configuration));
 
             services.AddDbContext<RecommendSongsDbContext>(options =>
                  options.UseNpgsql(Configuration.GetConnectionString("RecommendSongsDB")));
@@ -73,6 +76,7 @@ namespace recommendSongsService
 
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAuthenticateService, AuthenticateService>();
+            services.AddScoped<IRecommendSongsService, RecommendSongsService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -83,6 +87,9 @@ namespace recommendSongsService
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseAuthentication();
+            
+
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
@@ -92,13 +99,8 @@ namespace recommendSongsService
             app.UseHttpsRedirection();
 
             app.UseRouting();
-            
+            app.UseAuthorization();
             app.UseCors("AllowAllOrigins");
-
-            app.UseAuthorization();
-
-            app.UseAuthorization();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

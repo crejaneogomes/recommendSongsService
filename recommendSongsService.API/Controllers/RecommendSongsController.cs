@@ -1,5 +1,7 @@
+using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -11,21 +13,22 @@ namespace recommendSongsService.API.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class AuthenticationController : ControllerBase
+    public class RecommendSongsController : ControllerBase
     {
-        private readonly ILogger<AuthenticationController> _logger;
-        private readonly IAuthenticateService AuthenticationService;
-        public AuthenticationController(ILogger<AuthenticationController> logger, IAuthenticateService authenticationService)
+        private readonly ILogger<RecommendSongsController> _logger;
+        private readonly IRecommendSongsService RecommendSongsService;
+        public RecommendSongsController(ILogger<RecommendSongsController> logger, IRecommendSongsService recommendSongsService)
         {
             this._logger = logger;
-            this.AuthenticationService = authenticationService;
+            this.RecommendSongsService = recommendSongsService;
         }
 
-        [HttpPost]
-        [Route("login")]
-        public async Task<ActionResult<dynamic>> Post([FromBody]LoginDTO user)
+        [HttpGet]
+        [Authorize]
+        public async Task<ActionResult<dynamic>> Get()
         {
-            var result = await AuthenticationService.Authenticate(user);
+            Console.WriteLine("teste recommend");
+            var result = await RecommendSongsService.getRecommendedSongs(User.Identity.Name);
             if (result == null)
             {
                 return NotFound(new { message = "Usuário ou senha inválidos" });
