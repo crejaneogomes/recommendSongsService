@@ -5,14 +5,14 @@ Para executar o projeto é necessário instalar o SDK 3.1 da Microsoft e instala
 Possui integração com a API do spotify e da OpenWeatherMap
 
 # Containers
-- O projeto utiliza 2 container e está orquestrado no arquivo de docker-compose do projeto
+- O projeto utiliza 2 containers que estão orquestrado no arquivo de docker-compose do projeto
  - Container 1: Imagem do serviço RecommendSongsService - [Bakend]
- - Container 2: Imagem do SGBD PostgresSQL 
+ - Container 2: Imagem do SGBD PostgresSQL - [SGBD]
  
 # Rodando o Projeto
 - Clonar na sua máquina o repositório
 - Ir para a pasta "recommendSongsService.API"
-- Rodar o comando em algum terminal: docker-compose up
+- Rodar o comando em algum terminal: <b>docker-compose up</b>
 - um Swagger com as descrições dos endpoints pode ser acessado através da URL http://localhost:5000/swagger/index.html ou http://localhost:5001/swagger/index.html
 - A aplicação está disponível apenas em modo local nas urls: http://localhost:5000/ e http://localhost:5001/
 
