@@ -17,6 +17,8 @@ namespace recommendSongsService.Model
         public string Email { get; set; }
         public string Password { get; set; }
         public string Hometown { get; set; }
+        public string ForgotPasswordCode { get; set; }
+        public string salt { get; set; }
         public virtual List<Note> PersonalNotes  { get; set; }
     }
 }
