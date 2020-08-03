@@ -64,7 +64,7 @@ namespace recommendSongsService.API.Service
             var query = HttpUtility.ParseQueryString(builder.Query);
             query["q"] = homeTown;
             query["units"] = "metric";
-            query["appid"] = WebConfiguration.OpenWeatherAppId;
+            query["appid"] = _webConfiguration.OpenWeatherAppId;
             builder.Query = query.ToString();
             string url = builder.ToString();
             
@@ -86,7 +86,7 @@ namespace recommendSongsService.API.Service
         {
             var result = "";
             var req = new HttpRequestMessage(HttpMethod.Post, "https://accounts.spotify.com/api/token");
-            req.Headers.Add("Authorization", "Basic " + WebConfiguration.SpotifyClientCredentials);
+            req.Headers.Add("Authorization", "Basic " + _webConfiguration.SpotifyClientCredentials);
             req.Content = new FormUrlEncodedContent(new Dictionary<string, string>
             {
                 { "grant_type", "client_credentials" }
