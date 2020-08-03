@@ -15,10 +15,9 @@ namespace recommendSongsService.API.Service
         {
             _dbContext = dbContext;
         }
+
         public async Task<User> SaveUSer(UserDTO user)
         {
-            // TODO Criptografar senha e notes
-            // Logar request - data - user - message
             User userToSave = new User
             {
                 Name = user.Name,
@@ -39,6 +38,41 @@ namespace recommendSongsService.API.Service
             _dbContext.Notes.AddRange(notes.Cast<Note>().ToList());
             await _dbContext.SaveChangesAsync();
             return userSaved.Entity;
+        }
+
+        public Dictionary<string, string> ForgotUserPassword(string email)
+        {
+            Dictionary<string, string> result = new Dictionary<string, string>();
+            Random rnd = new Random();
+            var user = _dbContext.Users.FirstOrDefault(x => x.Email == email);
+            if (user == null)
+            {
+                return null;
+            } else
+            {
+                user.ForgotPasswordCode = rnd.Next(10000, 99999).ToString();
+                user.Password = null;
+                _dbContext.SaveChanges();
+                result.Add("Code", user.ForgotPasswordCode);
+                result.Add("User Email", user.Email);
+                return result;
+            }
+        }
+
+        public Dictionary<string, string> ChangeUserPassword(ResetPasswordDTO user)
+        {
+            Dictionary<string, string> result = new Dictionary<string, string>();
+            var userToUpdate = _dbContext.Users.FirstOrDefault(x => x.Email == user.Email && x.ForgotPasswordCode == user.ForgotPasswordCode);
+            if (user == null)
+            {
+                return null;
+            } else
+            {
+                userToUpdate.Password = UtilsFunctions.HashValue(user.NewPassword);
+                _dbContext.SaveChanges();
+                result.Add("Result","Password updated");
+                return result;
+            }
         }
     }
 }

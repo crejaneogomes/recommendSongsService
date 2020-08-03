@@ -8,9 +8,6 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using recommendSongsService.API.models.dto;
 using recommendSongsService.Model;
-using recommendSongsService.API.models;
-using System.Web;
-using Newtonsoft.Json.Linq;
 using Microsoft.Extensions.Options;
 
 namespace recommendSongsService.API.Service
@@ -38,25 +35,27 @@ namespace recommendSongsService.API.Service
             List<RecommendSongsDTO> songs = new List<RecommendSongsDTO>();
             var user = _dbContext.Users.FirstOrDefault(x => x.Name == userName);
             var temperature = await _openWeatherMapService.getTemperatureByUserHometown(user.Hometown);
+            playlistId = await _spotifyService.getPlaylistsByGenre(getGenreByTemperature(temperature));
+            songs = await _spotifyService.getTraksOfSpotifyPlaylistById(playlistId, genre);
+            return songs;
+        }
 
+        private string getGenreByTemperature(int temperature)
+        {
+            var genre = "";
             if(temperature > 30)
             {
-                playlistId = await _spotifyService.getPlaylistsByGenre("party");
                 genre = "party";
             } else if (temperature >=15 && temperature <= 30)
             {
-                playlistId = await _spotifyService.getPlaylistsByGenre("pop");
                 genre = "pop";
             } else if (temperature >=10 && temperature <= 14)
             {
-                playlistId = await _spotifyService.getPlaylistsByGenre("rock");
                 genre = "rock";
             } else {
-                playlistId = await _spotifyService.getPlaylistsByGenre("classical");
                 genre = "classical";
             }
-            songs = await _spotifyService.getTraksOfSpotifyPlaylistById(playlistId, genre);
-            return songs;
+            return genre;
         }
     }
 }

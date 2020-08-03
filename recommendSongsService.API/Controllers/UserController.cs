@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -26,6 +27,37 @@ namespace recommendSongsService.API.Controllers
             _logger.LogInformation("Adding user " + result);
             return result;
         }
-        
+
+        [HttpPut("ForgotPassword")]
+        public Dictionary<string,string> ForgotUserPassword(string userEmail)
+        {
+            var result = UserService.ForgotUserPassword(userEmail);
+            if(result == null)
+            {
+                _logger.LogInformation("User not found when Forgot User Password - " + userEmail);
+                return new Dictionary<string, string>()
+                {
+                    {"Result", "Usuario nao encontrado"}
+                };
+            }
+            _logger.LogInformation("Forgot Password for the user = " + userEmail);
+            return result;
+        }
+
+        [HttpPut("ResetPassword")]
+        public Dictionary<string,string> ResetUserPassword(ResetPasswordDTO user)
+        {
+            var result = UserService.ChangeUserPassword(user);
+            if(result == null)
+            {
+                _logger.LogInformation("User not found when update the user password - " + user.Email);
+                return new Dictionary<string, string>()
+                {
+                    {"Result", "Usuario nao encontrado"}
+                };
+            }
+            _logger.LogInformation("Updata user password of user" + user.Email);
+            return result;
+        }
     }
 }
