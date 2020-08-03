@@ -78,6 +78,8 @@ namespace recommendSongsService
             services.AddScoped<IAuthenticateService, AuthenticateService>();
             services.AddScoped<IRecommendSongsService, RecommendSongsService>();
             services.AddScoped<TokenService>();
+            services.AddScoped<SpotifyService>();
+            services.AddScoped<OpenWeatherMapService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

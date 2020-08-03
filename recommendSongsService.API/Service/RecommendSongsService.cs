@@ -19,139 +19,44 @@ namespace recommendSongsService.API.Service
     {
         private readonly RecommendSongsDbContext _dbContext;
         private readonly WebConfiguration _webConfiguration;
-        static HttpClient client;
+        private readonly SpotifyService _spotifyService;
+        private readonly OpenWeatherMapService _openWeatherMapService;
 
-        public RecommendSongsService(RecommendSongsDbContext dbContext, IOptionsMonitor<WebConfiguration> webConfiguration)
+        public RecommendSongsService(RecommendSongsDbContext dbContext, IOptionsMonitor<WebConfiguration> webConfiguration, SpotifyService spotifyService, OpenWeatherMapService openWeatherMapService)
         {
             _dbContext = dbContext;
             _webConfiguration = webConfiguration.CurrentValue;
-            client = new HttpClient();
+            _spotifyService = spotifyService;
+            _openWeatherMapService = openWeatherMapService;
         }
 
         public async Task<List<RecommendSongsDTO>> getRecommendedSongs(string userName)
         {
             var playlistId = ""; 
             var genre = "";
+
             List<RecommendSongsDTO> songs = new List<RecommendSongsDTO>();
             var user = _dbContext.Users.FirstOrDefault(x => x.Name == userName);
-            var temperature = await getTemperatureByUserHometown(user.Hometown);
-            var spotifyToken = await getSpotifyToken();
+            var temperature = await _openWeatherMapService.getTemperatureByUserHometown(user.Hometown);
 
             if(temperature > 30)
             {
-                playlistId = await getPlaylistsByGenre("party",spotifyToken);
+                playlistId = await _spotifyService.getPlaylistsByGenre("party");
                 genre = "party";
             } else if (temperature >=15 && temperature <= 30)
             {
-                playlistId = await getPlaylistsByGenre("pop",spotifyToken);
+                playlistId = await _spotifyService.getPlaylistsByGenre("pop");
                 genre = "pop";
             } else if (temperature >=10 && temperature <= 14)
             {
-                playlistId = await getPlaylistsByGenre("rock",spotifyToken);
+                playlistId = await _spotifyService.getPlaylistsByGenre("rock");
                 genre = "rock";
             } else {
-                playlistId = await getPlaylistsByGenre("classical",spotifyToken);
+                playlistId = await _spotifyService.getPlaylistsByGenre("classical");
                 genre = "classical";
             }
-            songs = await getTraksOfSpotifyPlaylistById(playlistId, spotifyToken, genre);
+            songs = await _spotifyService.getTraksOfSpotifyPlaylistById(playlistId, genre);
             return songs;
-        }
-
-        private async Task<int> getTemperatureByUserHometown(string homeTown)
-        {
-            int result = 0;
-            var builder = new UriBuilder("https://api.openweathermap.org/data/2.5/weather");
-            var query = HttpUtility.ParseQueryString(builder.Query);
-            query["q"] = homeTown;
-            query["units"] = "metric";
-            query["appid"] = _webConfiguration.OpenWeatherAppId;
-            builder.Query = query.ToString();
-            string url = builder.ToString();
-            
-            var req = new HttpRequestMessage(HttpMethod.Get, url);
-            try
-            {
-                var response = await client.SendAsync(req);
-                var responseMessage =(response.Content.ReadAsStringAsync().Result);
-                JObject json = JObject.Parse(responseMessage);
-                result = (int) json["main"]["temp"];
-            }catch(Exception e)
-            {
-                Console.WriteLine(e);
-            }
-            return result;
-        }
-
-        private async Task<string> getSpotifyToken()
-        {
-            var result = "";
-            var req = new HttpRequestMessage(HttpMethod.Post, "https://accounts.spotify.com/api/token");
-            req.Headers.Add("Authorization", "Basic " + _webConfiguration.SpotifyClientCredentials);
-            req.Content = new FormUrlEncodedContent(new Dictionary<string, string>
-            {
-                { "grant_type", "client_credentials" }
-            });
-
-            try
-            {
-                var response = await client.SendAsync(req);
-                var responseMessage =(response.Content.ReadAsStringAsync().Result);
-                JObject json = JObject.Parse(responseMessage);
-                result = (string) json["access_token"];
-            }catch(Exception e)
-            {
-                Console.WriteLine(e);
-            }
-            return result;
-        }
-
-        private async Task<String> getPlaylistsByGenre(string genre, string token)
-        {
-            string result = "";            
-            var req = new HttpRequestMessage(HttpMethod.Get, $"https://api.spotify.com/v1/browse/categories/{genre}/playlists");
-            req.Headers.Add("Authorization", "Bearer " + token);
-            try
-            {
-                var response = await client.SendAsync(req);
-                var responseMessage =(response.Content.ReadAsStringAsync().Result);
-                JObject json = JObject.Parse(responseMessage);
-                result = (string) json["playlists"]["items"][0]["id"];
-            }catch(Exception e)
-            {
-                Console.WriteLine(e);
-            }
-            return result;
-
-        }
-
-
-        private async Task<List<RecommendSongsDTO>> getTraksOfSpotifyPlaylistById(string playlistId, string token, string genre)
-        {
-            List<RecommendSongsDTO> result = new List<RecommendSongsDTO>();            
-            var req = new HttpRequestMessage(HttpMethod.Get, $"https://api.spotify.com/v1/playlists/{playlistId}/tracks");
-            req.Headers.Add("Authorization", "Bearer " + token);
-            try
-            {
-                var response = await client.SendAsync(req);
-                var responseMessage =(response.Content.ReadAsStringAsync().Result);
-                JObject json = JObject.Parse(responseMessage);
-                JArray a = (JArray)json["items"];
-                foreach(var song in a)
-                {
-                    RecommendSongsDTO songToAdd = new RecommendSongsDTO()
-                    {
-                        Song = (string)song["track"]["name"],
-                        Artist = (string)song["track"]["artists"][0]["name"],
-                        Genre = genre,
-                        Link = (string)song["track"]["href"]
-                    };
-                    result.Add(songToAdd);
-                }
-            }catch(Exception e)
-            {
-                Console.WriteLine(e);
-            }
-            return result;           
         }
     }
 }
