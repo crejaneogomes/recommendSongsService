@@ -1,6 +1,6 @@
 # Recommend Songs Service
-A microservice to register a user and recommend songs based on hometown.
-O projeto foi construído utilizando-se o framework  ASP.Net Core 3.1. E também faz uso de Docker e Docker Compose. 
+- Um microserviço para registrar usuários e recomendar músicas baseado na temperatura da cidade natal do usuário.
+- O projeto foi construído utilizando-se o framework  ASP.Net Core 3.1. E também faz uso de Docker e Docker Compose. 
 Para executar o projeto é necessário instalar o SDK 3.1 da Microsoft e instalar o Docker e Docker Compose.
 Possui integração com a API do spotify e da OpenWeatherMap
 
