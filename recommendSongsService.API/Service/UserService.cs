@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using recommendSongsService.API.models.dto;
+using recommendSongsService.API.Utils;
 using recommendSongsService.Model;
 
 namespace recommendSongsService.API.Service
@@ -21,7 +22,7 @@ namespace recommendSongsService.API.Service
             User userToSave = new User
             {
                 Name = user.Name,
-                Password = user.Password,
+                Password = UtilsFunctions.HashValue(user.Password),
                 Email = user.Email,
                 Hometown = user.Hometown
             };
@@ -32,7 +33,7 @@ namespace recommendSongsService.API.Service
             var notes = from note in user.PersonalNotes
                         select new Note
                         {
-                            NoteData = note.NoteData,
+                            NoteData = UtilsFunctions.HashValue(note.NoteData),
                             UserId = userSaved.Entity.Id
                         };
             _dbContext.Notes.AddRange(notes.Cast<Note>().ToList());

@@ -17,10 +17,10 @@ namespace recommendSongsService.API.Service
             _webConfiguration = webConfiguration.CurrentValue;
         }
 
-        public static string GenerateToken(User user)
+        public string GenerateToken(User user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(WebConfiguration.Secret);
+            var key = Encoding.ASCII.GetBytes(_webConfiguration.Secret);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new Claim[]
