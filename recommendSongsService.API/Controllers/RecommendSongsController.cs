@@ -33,6 +33,7 @@ namespace recommendSongsService.API.Controllers
                 return NotFound(new { message = "Nao existe recomendacoes" });
             } else 
             {
+                _logger.LogInformation("Recommend Songs for the user" + User.Identity.Name + " with the result: " + result);
                 return result;
             }
         }

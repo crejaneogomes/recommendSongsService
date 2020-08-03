@@ -25,6 +25,12 @@ namespace recommendSongsService
             .UseUrls("http://*:5000", "http://*:5001")
             .UseIISIntegration()
             .UseStartup<Startup>()
+            .ConfigureLogging(logBuilder =>
+            {
+                logBuilder.ClearProviders(); // removes all providers from LoggerFactory
+                logBuilder.AddConsole();
+                logBuilder.AddTraceSource("Information, ActivityTracing"); // Add Trace listener provider
+            })
             .ConfigureAppConfiguration((hostingContext, config) =>
             {
                 config.Sources.Clear();

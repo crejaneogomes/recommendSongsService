@@ -31,6 +31,7 @@ namespace recommendSongsService.API.Controllers
                 return NotFound(new { message = "Usuário ou senha inválidos" });
             } else 
             {
+                _logger.LogInformation("Authenticate the user" + result);
                 return result;
             }
         }

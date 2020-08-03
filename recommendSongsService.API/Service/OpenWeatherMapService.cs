@@ -11,7 +11,6 @@ namespace recommendSongsService.API.Service
     {
         private readonly WebConfiguration _webConfiguration;
         private static HttpClient client;
-        private static string spotifyToken;
 
         public OpenWeatherMapService(IOptionsMonitor<WebConfiguration> webConfiguration)
         {

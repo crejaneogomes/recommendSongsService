@@ -23,6 +23,7 @@ namespace recommendSongsService.API.Controllers
         public async Task<User> Post(UserDTO user)
         {
             var result = await UserService.SaveUSer(user);
+            _logger.LogInformation("Adding user " + result);
             return result;
         }
         
