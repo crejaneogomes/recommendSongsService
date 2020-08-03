@@ -15,10 +15,11 @@
 - Run the command in any terminal: <b> docker-compose up </b>
 - a Swagger with descriptions of the endpoints can be accessed through the URL http://localhost:5000/swagger/index.html or http://localhost:5001/swagger/index.html
 - The application is only available in local mode at the urls: http: //localhost:5000/ and http://localhost:5001/
+
 Some considerations:
 - To execute the Music Recommendation request, you must first register a user, go through the login route to authenticate and receive a token. Finally, use this token to authorize the recommendation request;
 
-Visual Studio Code was the IDE chosen for the development of the project, to open the project just go to file-> opne folder and select the project folder.
+- Visual Studio Code was the IDE chosen for the development of the project, to open the project just go to file-> opne folder and select the project folder.
 
 # Solution Overview
 https://drive.google.com/file/d/1aHkuVpBfGyDpb3dSJoIQSR9FNBkK2g6y/view?usp=sharing)
