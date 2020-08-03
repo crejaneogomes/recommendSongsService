@@ -27,11 +27,10 @@ namespace recommendSongsService.API.Controllers
         [Authorize]
         public async Task<ActionResult<dynamic>> Get()
         {
-            Console.WriteLine("teste recommend");
             var result = await RecommendSongsService.getRecommendedSongs(User.Identity.Name);
             if (result == null)
             {
-                return NotFound(new { message = "Usuário ou senha inválidos" });
+                return NotFound(new { message = "Nao existe recomendacoes" });
             } else 
             {
                 return result;

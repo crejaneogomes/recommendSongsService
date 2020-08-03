@@ -11,16 +11,20 @@ using recommendSongsService.Model;
 using recommendSongsService.API.models;
 using System.Web;
 using Newtonsoft.Json.Linq;
+using Microsoft.Extensions.Options;
 
 namespace recommendSongsService.API.Service
 {
     public class RecommendSongsService : IRecommendSongsService
     {
         private readonly RecommendSongsDbContext _dbContext;
+        private readonly WebConfiguration _webConfiguration;
         static HttpClient client;
-        public RecommendSongsService(RecommendSongsDbContext dbContext)
+
+        public RecommendSongsService(RecommendSongsDbContext dbContext, IOptionsMonitor<WebConfiguration> webConfiguration)
         {
             _dbContext = dbContext;
+            _webConfiguration = webConfiguration.CurrentValue;
             client = new HttpClient();
         }
 
@@ -29,8 +33,8 @@ namespace recommendSongsService.API.Service
             var playlistId = ""; 
             var genre = "";
             List<RecommendSongsDTO> songs = new List<RecommendSongsDTO>();
-            // RecommendSongsDTO result = new RecommendSongsDTO();
-            var temperature = await getTemperatureByUserHometown("Recife");
+            var user = _dbContext.Users.FirstOrDefault(x => x.Name == userName);
+            var temperature = await getTemperatureByUserHometown(user.Hometown);
             var spotifyToken = await getSpotifyToken();
 
             if(temperature > 30)
@@ -60,7 +64,7 @@ namespace recommendSongsService.API.Service
             var query = HttpUtility.ParseQueryString(builder.Query);
             query["q"] = homeTown;
             query["units"] = "metric";
-            query["appid"] = Settings.OpenWeatherAppId;
+            query["appid"] = WebConfiguration.OpenWeatherAppId;
             builder.Query = query.ToString();
             string url = builder.ToString();
             
@@ -82,7 +86,7 @@ namespace recommendSongsService.API.Service
         {
             var result = "";
             var req = new HttpRequestMessage(HttpMethod.Post, "https://accounts.spotify.com/api/token");
-            req.Headers.Add("Authorization", "Basic " + Settings.SpotifyClientCredentials);
+            req.Headers.Add("Authorization", "Basic " + WebConfiguration.SpotifyClientCredentials);
             req.Content = new FormUrlEncodedContent(new Dictionary<string, string>
             {
                 { "grant_type", "client_credentials" }
@@ -104,7 +108,6 @@ namespace recommendSongsService.API.Service
         private async Task<String> getPlaylistsByGenre(string genre, string token)
         {
             string result = "";            
-            Console.WriteLine(token);
             var req = new HttpRequestMessage(HttpMethod.Get, $"https://api.spotify.com/v1/browse/categories/{genre}/playlists");
             req.Headers.Add("Authorization", "Bearer " + token);
             try
@@ -125,7 +128,6 @@ namespace recommendSongsService.API.Service
         private async Task<List<RecommendSongsDTO>> getTraksOfSpotifyPlaylistById(string playlistId, string token, string genre)
         {
             List<RecommendSongsDTO> result = new List<RecommendSongsDTO>();            
-            Console.WriteLine(token);
             var req = new HttpRequestMessage(HttpMethod.Get, $"https://api.spotify.com/v1/playlists/{playlistId}/tracks");
             req.Headers.Add("Authorization", "Bearer " + token);
             try

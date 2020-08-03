@@ -2,18 +2,25 @@ using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using recommendSongsService.API.models;
 using recommendSongsService.Model;
 
 namespace recommendSongsService.API.Service
 {
     public class TokenService
     {
-         public static string GenerateToken(User user)
+        private readonly WebConfiguration _webConfiguration;
+
+        public TokenService(IOptionsMonitor<WebConfiguration> webConfiguration)
+        {
+            _webConfiguration = webConfiguration.CurrentValue;
+        }
+
+        public static string GenerateToken(User user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(Settings.Secret);
+            var key = Encoding.ASCII.GetBytes(WebConfiguration.Secret);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new Claim[]

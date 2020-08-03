@@ -34,7 +34,6 @@ namespace recommendSongsService
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var key = Encoding.ASCII.GetBytes(Settings.Secret);
             services.AddCors(options => 
             {
                 options.AddPolicy("AllowAllOrigins",
@@ -45,8 +44,9 @@ namespace recommendSongsService
             {
                 c.SwaggerDoc(name:"v1", new OpenApiInfo {Title = "Recommend Songs Api", Version = "v1.0"});
             });
-            
-            services.AddSingleton(new AppSettings(Configuration));
+            services.Configure<WebConfiguration>(Configuration.GetSection("WebConfiguration"));
+
+            var key = Encoding.ASCII.GetBytes(Configuration.GetValue<string>("WebConfiguration:Secret"));
 
             services.AddDbContext<RecommendSongsDbContext>(options =>
                  options.UseNpgsql(Configuration.GetConnectionString("RecommendSongsDB")));
