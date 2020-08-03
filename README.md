@@ -22,4 +22,4 @@ Algumas considerações:
 O Visual Studio Code foi a IDE escolhida para o desenvolvimento do projeto, para abrir o projeto basta ir em file->opne folder e selecionar a pasta do projeto. 
 
 # Visão Geral da Solução
-![alt text](https://drive.google.com/file/d/1aHkuVpBfGyDpb3dSJoIQSR9FNBkK2g6y/view?usp=sharing)
+https://drive.google.com/file/d/1aHkuVpBfGyDpb3dSJoIQSR9FNBkK2g6y/view?usp=sharing)
